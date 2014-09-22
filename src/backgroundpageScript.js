@@ -31,14 +31,22 @@
 				chrome.tabs.create({
 					url : link,
 					selected : false
+				}, function (tab) {
+					tabTracker.push(tab.id);
 				});
 			}
+
+			tabTracker = []
 
 			chrome.tabs.onUpdated.addListener(function(tabID, changeInfo, tab) {
 				if (changeInfo.status == "complete") {
 					chrome.tabs.get(tabID, function(tab) {
-						if (tab.url.indexOf("youtu") > -1 && !tab.highlighted) {
+						var index = tabTracker.indexOf(tab.id);
+						if (tab.url.indexOf("youtu") > -1 && !tab.highlighted && index > -1) {
 							chrome.tabs.executeScript(tab.id, {code:"document.getElementsByClassName('video-stream')[0].pause()"});
+						}
+						if (index > -1) {
+						    tabTracker.splice(index, 1);
 						}
 					});
 				}
