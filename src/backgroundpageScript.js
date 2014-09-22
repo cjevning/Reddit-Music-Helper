@@ -37,7 +37,7 @@
 			chrome.tabs.onUpdated.addListener(function(tabID, changeInfo, tab) {
 				if (changeInfo.status == "complete") {
 					chrome.tabs.get(tabID, function(tab) {
-						if (tab.url.indexOf("youtu") > -1 && !tab.highlighted ) {
+						if (tab.url.indexOf("youtu") > -1 && !tab.highlighted) {
 							chrome.tabs.executeScript(tab.id, {code:"document.getElementsByClassName('video-stream')[0].pause()"});
 						}
 					});
