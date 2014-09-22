@@ -1,19 +1,33 @@
-# F7U12 Link Opener
+# Reddit Music Helper
 
-This Extension will open all Links on the currently opened F7U12/Subreddit Page.
+This extension will open all Soundcloud links (and others, dependent on how you set the options) on Reddit and all subreddits (like r/trap).
 
-![logo](https://github.com/nickrussler/F7U12-Link-Opener/raw/master/src/img/icon128.png)
+<--- Special Thanks to Nick Russler for developing the original F7U12 Link Opener that provided the framework for this extension. Check it out at https://github.com/nickrussler/F7U12-Link-Opener --->
 
-## features
+![logo](https://github.com/cjevning/Reddit-Music-Helper/raw/master/src/img/icon128.png)
 
-### open comments
+## Features
 
-You can also open the comments in a seperate tab.
+### Auto-open YouTube links
 
-### New Tabs Limit
+The extension can automatically open YouTube links (and also automatically pause them!) in addition to Soundcloud
 
-Decide yourself how many Links you want to open at once.
+### Open directly, open comments, or do nothing
+
+You can choose whether to open links from other sites directly, open the comments for that link, or do nothing
+
+### Utilize history
+
+Choose whether to open links you've already visited or not
+
+### NSFW handling
+
+Choose whether or not to open NSFW links
+
+### New tabs limit
+
+Decide how many links you want to open at once.
 
 ### Keyboard shortcut
 
-You are free to choose your own Keyboard shortcut to open up the Tabs
+You are free to choose your own keyboard shortcut to open up the tabs

@@ -3,7 +3,7 @@
    "background": { "page": "background.html" },
    "browser_action": {
       "default_icon": "img/icon19.png",
-      "default_title": "Reddit Music Opener"
+      "default_title": "Reddit Music Helper"
    },
    "content_scripts": [ {
       "js": [ "jquery-1.6.4.min.js", "shortcut.js", "contentScript.js"],
@@ -14,7 +14,7 @@
    "icons": {
       "128": "img/icon128.png"
    },
-   "name": "Reddit Music Opener",
+   "name": "Reddit Music Helper",
    "options_page": "options.html",
    "permissions": ["tabs", "history", "unlimitedStorage", "http://*.reddit.com/*", "https://*.reddit.com/*", "http://*.youtube.com/*", "https://*.youtube.com/*", "http://*.youtu.be/*", "https://*.youtu.be/*"],
    "update_url": "http://clients2.google.com/service/update2/crx",
