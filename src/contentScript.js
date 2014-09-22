@@ -22,16 +22,14 @@ function isNSFW(url){
 chrome.extension.onRequest.addListener(function(request, sender, callback) {
 	switch (request.action) {
 		case 'openRedditLinks':
-			jquery_set_links = $("#siteTable a.title:visible");
-			jquery_set_comments = $("#siteTable a.comments:visible");
-
+			jquery_set_links = $("#siteTable").find("a.title:visible");
+			jquery_set_comments = $("#siteTable").find("a.comments:visible");
 			var data = Array();
-
+			
 			var i;
 			for( i = 0; i < jquery_set_links.length; i++) {
 				data.push(new Array(jquery_set_links[i].text, jquery_set_links[i].href, jquery_set_comments[i].href, isNSFW(jquery_set_links[i])));
 			}
-
 			if(data.length > 0) {
 				callback({
 					urls : data,

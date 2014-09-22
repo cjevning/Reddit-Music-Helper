@@ -21,30 +21,34 @@ Released   : 20081230
 	<body>
 		<div id="page">
 			<div id="header">
-				<h1>Reddit Link Opener</h1>
+				<h1>Reddit Music Opener</h1>
 				<h2>Option Page</h2>
 			</div>
 			<div class="contentText">
 				<br>
 				<p>
-					Open comments:
-					<input type=checkbox id="opencomments" value="false">
+					Open YouTube Links Directly:
+					<input type=checkbox id="openyoutubelinks" checked="true">
+				</p>
+				<p>
+					How to Handle Non Soundcloud and YouTube Links:
+					<form action="" name="nonstandardlinks">
+					<input type="radio" name="linkhandle" value="opencomments" id="opencomments" checked="true">Open the Comments<br>
+					<input type="radio" name="linkhandle" value="opendirectly" id="opendirectly">Open the Link<br>
+					<input type="radio" name="linkhandle" value="donothing" id="donothing">Do Nothing
+					</form>
 				</p>
 				<p>
 					Open Visited Links:
-					<input type=checkbox id="openvisitedlinks" value="true">
+					<input type=checkbox id="openvisitedlinks" value="false">
 				</p>
 				<p>
 					Open NSFW Links:
-					<input type=checkbox id="opennsfwlinks" value="true">
-				</p>
-				<p>
-					Open Links directly (Add .png to all imgur links):
-					<input type=checkbox id="openlinksdirectly" value="false">
+					<input type=checkbox id="opennsfwlinks" value="false">
 				</p>
 				<p>
 					New Tabs Limit:
-					<input id="tabslimit" type="text" size="30" maxlength="30" value="25">
+					<input id="tabslimit" type="number" min="1" value="10">
 				</p>
 				<p>
 					Keyboard Shortcut:

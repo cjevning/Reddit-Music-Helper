@@ -3,20 +3,20 @@
    "background": { "page": "background.html" },
    "browser_action": {
       "default_icon": "img/icon19.png",
-      "default_title": "Reddit Link Opener"
+      "default_title": "Reddit Music Opener"
    },
    "content_scripts": [ {
       "js": [ "jquery-1.6.4.min.js", "shortcut.js", "contentScript.js"],
-      "matches": [ "http://www.reddit.com/*", "https://www.reddit.com/*" ],
+      "matches": [ "http://*.reddit.com/*", "https://*.reddit.com/*" ],
       "run_at": "document_start"
    } ],
-   "description": "This extension will open all links in tabs on Reddit and all Subreddits (for example F7u12)",
+   "description": "This extension will open all SoundCloud links (and others, dependent on how you set the options) on Reddit and all subreddits (like r/trap).",
    "icons": {
       "128": "img/icon128.png"
    },
-   "name": "Reddit Link Opener",
+   "name": "Reddit Music Opener",
    "options_page": "options.html",
-   "permissions": ["tabs", "history", "unlimitedStorage"],
+   "permissions": ["tabs", "history", "unlimitedStorage", "http://*.reddit.com/*", "https://*.reddit.com/*", "http://*.youtube.com/*", "https://*.youtube.com/*", "http://*.youtu.be/*", "https://*.youtu.be/*"],
    "update_url": "http://clients2.google.com/service/update2/crx",
    "version": "1.3.0"
 }

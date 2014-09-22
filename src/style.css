@@ -77,6 +77,10 @@ background-repeat:no-repeat;
 
 }
 
+form {
+  margin-left: 15px;
+}
+
 .contentTitle h1
 {
 margin-left:10px;

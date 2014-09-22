@@ -14,88 +14,87 @@
 				});
 			}
 
+			function isTrueSet(value) {
+				if (value.toLowerCase() == "true") return true;
+				return false;
+			}
+
+			function isStandard(url, openyoutubelinks) {
+				if ((url.indexOf("soundcloud") > -1) || (openyoutubelinks && (url.indexOf("youtu") > -1))) return true;
+				return false;
+			}
+
+			function openInNewTab(link) {
+				chrome.history.addUrl({
+					url : link
+				});
+				chrome.tabs.create({
+					url : link,
+					selected : false
+				});
+			}
+
+			chrome.tabs.onUpdated.addListener(function(tabID, changeInfo, tab) {
+				if (changeInfo.status == "complete") {
+					chrome.tabs.get(tabID, function(tab) {
+						if (tab.url.indexOf("youtu") > -1) {
+							chrome.tabs.executeScript(tab.id, {code:"document.getElementsByClassName('video-stream')[0].pause()"});
+						}
+					});
+				}
+			})
+
 			function openAllUrls(tab) {
+				var openyoutubelinks = isTrueSet(localStorage["openyoutubelinks"]);
+				var nonstandardlinks = localStorage["nonstandardlinks"];
+				var openvisitedlinks = isTrueSet(localStorage["openvisitedlinks"]);
+				var opennsfwlinks = isTrueSet(localStorage["opennsfwlinks"]);
+				var tabslimit = parseInt(localStorage["tabslimit"]);
 				chrome.tabs.sendRequest(tab.id, {
 					action : 'openRedditLinks',
 					tabid : tab.id
 				}, function(response) {
-					openUrl(response.urls, 0, 0, response.tabid);
+					openUrl(response.urls, 0, response.tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit);
 				});
 			}
 
-			function openUrl(urls, index, count, tabid) {
+			function openUrl(urls, index, tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit) {
+				if(tabslimit <= 0) {
+					return;
+				}
+				var url = urls[index];
+				if(!opennsfwlinks && ((url[0].toLowerCase().indexOf("nsfw") != -1) || url[3])) {
+					openUrl(urls, index + 1, tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit);
+					return;
+				}
+				var urlToOpen;
+				var directURL = url[1];
 
-				if(index == urls.length) {
-					if(count == 0) {
-						chrome.tabs.sendRequest(tabid, {
-							action : 'openNextPage'
-						});
-					}
+				if(index == urls.length-1) {
+					chrome.tabs.sendRequest(tabid, {
+						action : 'openNextPage'
+					});
 					return;
 				}
 
-				var url = urls[index];
-
-				if(!url[1].match("javascript:.*")) {
-
-					var opencomments = (localStorage["opencomments"] == "true");
-					var openvisitedlinks = (localStorage["openvisitedlinks"] == "true");
-					var opennsfwlinks = (localStorage["opennsfwlinks"] == "true");
-					var openlinksdirectly = (localStorage["openlinksdirectly"] == "true");
-					var tabslimit = localStorage["tabslimit"];
-					
-					if(!opennsfwlinks && ((url[0].toLowerCase().indexOf("nsfw") != -1) || url[3])) {
-						openUrl(urls, index + 1, count, tabid);
-						return;
-					}
-
-					if(count >= tabslimit) {
-						openUrl(urls, index + 1, count, tabid);
-						return;
-					}
-
-					var historyItemUrl = url[1];
+				var standard = isStandard(directURL, openyoutubelinks);
+				if ((nonstandardlinks != "donothing") || standard) {
+					if ((nonstandardlinks == "opencomments") && !standard) directURL = url[2];
 					chrome.history.getVisits({
-						url : historyItemUrl
+						url : directURL
 					}, function(visitItems) {
-
-						if(!(openvisitedlinks || (visitItems.length == 0))) {
-							openUrl(urls, index + 1, count, tabid);
-							return;
+						if(openvisitedlinks || (visitItems.length == 0)) {
+							openInNewTab(directURL)
+							openUrl(urls, index + 1, tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit-=1);
 						}
-
-						if(openlinksdirectly) {
-							var m = url[1].match(/([^\/\\]+)\.(\w+)$/);
-
-							if((!m) && (url[1].toLowerCase().indexOf("imgur") != -1)) {
-								// To Make the original link "purple"
-								chrome.history.addUrl({
-									url : url[1]
-								});
-
-								url[1] += ".png";
-							}
+						else {
+							openUrl(urls, index + 1, tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit);
 						}
-
-						chrome.tabs.sendRequest(tabid, {
-							action : "scrapeInfoCompanionBar",
-							index : index
-						});
-
-						chrome.tabs.create({
-							url : url[1],
-							selected : false
-						});
-
-						if(opencomments) {
-							chrome.tabs.create({
-								url : url[2],
-								selected : false
-							});
-						}
-
-						openUrl(urls, index + 1, count + 1, tabid);
 					});
+				}
+				else {
+					openUrl(urls, index + 1, tabid, openyoutubelinks, nonstandardlinks, openvisitedlinks, opennsfwlinks, tabslimit);
+					return;
 				}
 			}
 
@@ -136,17 +135,22 @@
 
 			function init() {
 
-				var opencomments = localStorage["opencomments"];
+				var openyoutubelinks = localStorage["openyoutubelinks"];
+				var nonstandardlinks = localStorage["nonstandardlinks"];
 				var openvisitedlinks = localStorage["openvisitedlinks"];
 				var opennsfwlinks = localStorage["opennsfwlinks"];
-				var openlinksdirectly = localStorage["openlinksdirectly"];
 				var tabslimit = localStorage["tabslimit"];
 				var keyboardshortcut = localStorage["keyboardshortcut"];
 
 				localStorage["oldkeyboardshortcut"] = undefined;
 
-				if(!opencomments) {
-					localStorage["opencomments"] = "false";
+
+				if(!openyoutubelinks) {
+					localStorage["openyoutubelinks"] = "true";
+				}
+
+				if(!nonstandardlinks) {
+					localStorage["nonstandardlinks"] = "opencomments";
 				}
 
 				if(!openvisitedlinks) {
@@ -154,15 +158,11 @@
 				}
 
 				if(!opennsfwlinks) {
-					localStorage["opennsfwlinks"] = "true";
-				}
-
-				if(!openlinksdirectly) {
-					localStorage["openlinksdirectly"] = "false";
-				}
+					localStorage["opennsfwlinks"] = "false";
+				}			
 
 				if(!tabslimit) {
-					localStorage["tabslimit"] = 25;
+					localStorage["tabslimit"] = 10;
 				}
 
 				if(!keyboardshortcut) {
